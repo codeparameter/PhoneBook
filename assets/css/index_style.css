@@ -42,3 +42,9 @@ body
     margin-bottom: 20px;
 }
 
+a,
+a:hover,
+a:active{
+    color: inherit;
+    text-decoration: inherit;
+}
