@@ -4,7 +4,8 @@ namespace App\Controllers;
 
 use App\Models\Contact;
 
-class ContactController{
+class ContactController
+{
 
     private $contactModel;
 
@@ -13,11 +14,19 @@ class ContactController{
         $this->contactModel = new Contact();
     }
 
-    public function index(){
+    public function index()
+    {
+
+        $user = new Contact();
+        $user->create([
+            'FirstName'=> 'MJ',
+            'LastName' => 'Sobasa',
+            'Phone' => '09123456789'
+        ]);
 
         $where = ['ORDER' => ['ContactID' => 'DESC']];
 
-        if(isset($_GET['query']))
+        if (isset($_GET['query']))
             $where['OR'] = [
                 "FirstName[~]" => $_GET['query'],
                 "LastName[~]" => $_GET['query'],
@@ -27,5 +36,10 @@ class ContactController{
         view('index', [
             'contacts' => $this->contactModel->get('*', $where),
         ]);
+    }
+
+    public function create()
+    {
+        _global("request")->redirect('');
     }
 }
