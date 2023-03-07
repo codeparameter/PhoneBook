@@ -2,35 +2,30 @@
 
 namespace App\Controllers;
 
+use App\Controllers\Contract\BaseController;
 use App\Models\Contact;
 
-class ContactController
+class ContactController extends BaseController
 {
 
     private $contactModel;
 
     public function __construct()
     {
+        parent::__construct();
         $this->contactModel = new Contact();
     }
 
     public function index()
     {
 
-        $user = new Contact();
-        $user->create([
-            'FirstName'=> 'MJ',
-            'LastName' => 'Sobasa',
-            'Phone' => '09123456789'
-        ]);
-
         $where = ['ORDER' => ['ContactID' => 'DESC']];
 
-        if (isset($_GET['query']))
+        if ($this->request->isset('query'))
             $where['OR'] = [
-                "FirstName[~]" => $_GET['query'],
-                "LastName[~]" => $_GET['query'],
-                "Phone[~]" => $_GET['query'],
+                "FirstName[~]" => $this->request->param('query'),
+                "LastName[~]" => $this->request->param('query'),
+                "Phone[~]" => $this->request->param('query'),
             ];
 
         view('index', [
@@ -40,6 +35,8 @@ class ContactController
 
     public function create()
     {
+        // check if contact 
+        // $this->contactModel->has(['Phone' => $[]]);
         _global("request")->redirect('');
     }
 }
