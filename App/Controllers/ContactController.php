@@ -28,8 +28,12 @@ class ContactController extends BaseController
                 "Phone[~]" => $this->request->param('query'),
             ];
 
+        $chunk = $this->contactModel->chunk('*', $where);
+
         view('index', [
-            'contacts' => $this->contactModel->get('*', $where),
+            'currentPage' => $chunk['currentPage'],
+            'totalPages' => $chunk['totalPages'],
+            'contacts' => $chunk['data'],
         ]);
     }
 
