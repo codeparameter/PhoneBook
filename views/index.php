@@ -191,7 +191,8 @@
     script('popper.min.js');
     script('bootstrap.min.js');
     // script('index.js');
-    script('createContact.js');
+    script('formQuery.js');
+    script('contact.js');
     ?>
 
 </body>

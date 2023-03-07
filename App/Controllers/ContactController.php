@@ -37,6 +37,57 @@ class ContactController extends BaseController
         ]);
     }
 
+    private function findContact($contactID)
+    {
+        if(!is_numeric($contactID))
+            return json(
+                [
+                    'status' => 'error',
+                    'message' => 'Contact ID must be integer'
+                ]
+            );
+        elseif($contactID <= 0)
+            return json(
+                [
+                    'status' => 'error',
+                    'message' => 'Contact ID must be greater than 0'
+                ]
+            );
+
+        $contact = $this->contactModel->find($contactID);
+        
+        if(is_null($contact))
+        return json(
+            [
+                'status' => 'error',
+                'message' => 'Wrong Contact ID!'
+            ]
+        );
+
+        return $contact;
+    }
+
+    public function editContact($contactID)
+    {
+        $contact = $this->findContact($contactID);
+        $contact->FistName = $this->request->param('firstName');
+        $contact->LastName = $this->request->param('lastName');
+        $contact->Phone = $this->request->param('userPhone');
+        $contact->save();
+        return json(
+            [
+                'status' => 'OK',
+                'message' => 'Contact edited'
+            ]
+        );
+    }
+
+    public function editView($contactID)
+    {
+        $contact = $this->findContact($contactID);
+        view('editContact', $contact->getAttrs());
+    }
+
     public function create()
     {
 
