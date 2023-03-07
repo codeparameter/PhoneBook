@@ -39,8 +39,36 @@ class ContactController extends BaseController
 
     public function create()
     {
-        // check if contact 
-        // $this->contactModel->has(['Phone' => $[]]);
-        _global("request")->redirect('');
+
+        $newContact = [
+            'FirstName' => $this->request->param('firstName'),
+            'LastName' => $this->request->param('lastName'),
+            'Phone' => $this->request->param('userPhone'),
+        ];
+
+        // check if contact phone number already exist
+        if ($this->contactModel->has(['Phone' => $this->request->param('userPhone')]))
+            return json(
+                [
+                    'status' => 'error',
+                    'message' => 'Phone number already exist!'
+                ]
+            );
+
+        $contactID = $this->contactModel->create($newContact);
+
+        if ($contactID > 0) return json(
+            [
+                'status' => 'OK',
+                'message' => 'Contact added'
+            ]
+        );
+
+        return json(
+            [
+                'status' => 'error',
+                'message' => 'Something went wrong!'
+            ]
+        );
     }
 }

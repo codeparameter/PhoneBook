@@ -37,16 +37,19 @@
 
                 <h5 class="mt-2">Add New Contact</h5>
 
-                <form action="<?= site_url("contact/create") ?>" method="post">
+                <!-- <form action="<? //=site_url("contact/create") 
+                                    ?>" method="post"> -->
+                <div data-target="<?= site_url('contact/create') ?>">
                     <input class="form-control mb-3 mt-3" placeholder="add first name" id="firstName" name="firstName">
                     <div id="firstNameAlert" class="alert alert-danger text-justify p-2 ">Please add first name</div>
                     <input class="form-control mb-3 mt-3" placeholder="add last name" id="lastName" name="lastName">
                     <div id="lastNameAlert" class="alert alert-danger text-justify p-2 ">Please add last name</div>
                     <input class="form-control mb-3" placeholder="add phone" id="userPhone" name="userPhone">
                     <div id="phoneAlert" class="alert alert-danger text-justify p-2 ">Please add a valid number</div>
-                </form>
-
-                <button onclick="addContact()" class="btn btn-info w-100 btn1">Add</button>
+                    <button id="contactSubmit" class="btn btn-info w-100 btn1">
+                        Add
+                    </button>
+                </div>
 
 
             </div>
@@ -188,6 +191,7 @@
     script('popper.min.js');
     script('bootstrap.min.js');
     // script('index.js');
+    script('createContact.js');
     ?>
 
 </body>
