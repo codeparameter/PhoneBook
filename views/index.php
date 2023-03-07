@@ -123,12 +123,12 @@
                 <table id="myTable" class="table text-justify table-striped">
 
                     <thead class="tableh1">
-                        <th class="col-1">select</th>
+                        <th class="col-1" id="selectAll">select</th>
                         <th class="col-1">ID</th>
                         <th class="">FirstName</th>
                         <th class="">LastName</th>
                         <th class="">Phone</th>
-                        <th class="col-1">delete</th>
+                        <th class="col-1" id="deleteMultiple" data-target="<?= site_url('contact/delete-selected') ?>">delete</th>
                         <th class="col-1">edit</th>
                     </thead>
 
@@ -137,14 +137,14 @@
                         <?php foreach ($contacts as $contact) : ?>
                             <tr class="">
                                 <td class="col-1">
-                                    <div style="display: flex; justify-content: center; margin-block: 5px;"><input type="checkbox"></div>
+                                    <div style="display: flex; justify-content: center; margin-block: 5px;"><input type="checkbox" class="selectContact" data-contact-id="<?= $contact['ContactID'] ?>"></div>
                                 </td>
                                 <td class="col-1"> <?= $contact['ContactID'] ?> </td>
                                 <td> <?= $contact['FirstName'] ?> </td>
                                 <td> <?= $contact['LastName'] ?> </td>
                                 <td> <?= $contact['Phone'] ?> </td>
                                 <td class="col-1">
-                                    <a href="<?= site_url("contact/delete/{$contact['ContactID']}") ?>" style="display: flex; justify-content: center;">
+                                    <div class="deleteContact" data-target="<?= site_url("contact/delete/{$contact['ContactID']}") ?>" style="display: flex; justify-content: center;">
                                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="red" version="1.1" id="Capa_1" width="20px" height="20px" viewBox="0 0 482.428 482.429" xml:space="preserve">
                                             <g>
                                                 <g>
@@ -155,7 +155,7 @@
                                                 </g>
                                             </g>
                                         </svg>
-                                    </a>
+                                    </div>
                                 </td>
                                 <td class="col-1">
                                     <a href="<?= site_url("contact/edit/{$contact['ContactID']}") ?>" style="display: flex; justify-content: center;">
@@ -193,6 +193,7 @@
     // script('index.js');
     script('formQuery.js');
     script('contact.js');
+    script('deleteContact.js');
     ?>
 
 </body>

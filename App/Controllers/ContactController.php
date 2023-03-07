@@ -37,55 +37,63 @@ class ContactController extends BaseController
         ]);
     }
 
-    private function findContact($contactID)
+    private function contactOperand($contactID, $operator)
     {
-        if(!is_numeric($contactID))
-            return json(
-                [
-                    'status' => 'error',
-                    'message' => 'Contact ID must be integer'
-                ]
-            );
-        elseif($contactID <= 0)
-            return json(
-                [
-                    'status' => 'error',
-                    'message' => 'Contact ID must be greater than 0'
-                ]
-            );
+        if (!is_numeric($contactID))
+            jsonHeader('error', 'Contact ID must be integer');
+        elseif ($contactID <= 0)
+            jsonHeader('error', 'Contact ID must be greater than 0');
 
-        $contact = $this->contactModel->find($contactID);
-        
-        if(is_null($contact))
-        return json(
-            [
-                'status' => 'error',
-                'message' => 'Wrong Contact ID!'
-            ]
-        );
+        $contact = $this->contactModel->{$operator}($contactID);
+
+        if (is_null($contact))
+            jsonHeader('error', 'Wrong Contact ID!');
 
         return $contact;
     }
 
     public function editContact($contactID)
     {
-        $contact = $this->findContact($contactID);
+        $contact = $this->contactOperand($contactID, 'find');
+
+        $phoneChanged = $contact->Phone != $this->request->param('userPhone');
+
+        if ($phoneChanged){
+            if ($this->contactModel->has(['Phone' => $this->request->param('userPhone')])){
+                jsonHeader('error', 'Phone number already exist!');
+            }
+        }
+        else{
+            if ($this->contactModel->count(['Phone' => $this->request->param('userPhone')]) > 1){
+                jsonHeader('error', 'Phone number already exist!');
+            }
+        }
+
         $contact->FistName = $this->request->param('firstName');
         $contact->LastName = $this->request->param('lastName');
         $contact->Phone = $this->request->param('userPhone');
         $contact->save();
-        return json(
-            [
-                'status' => 'OK',
-                'message' => 'Contact edited'
-            ]
-        );
+        jsonHeader('OK', 'Contact edited');
     }
 
     public function editView($contactID)
     {
-        $contact = $this->findContact($contactID);
+        $contact = $this->contactOperand($contactID, 'find');
         view('editContact', $contact->getAttrs());
+    }
+
+    public function delete($contactID)
+    {
+        $this->contactOperand($contactID, 'deleteOne');
+        jsonHeader('OK', 'Contact deleted');
+    }
+
+    public function deleteSelected()
+    {
+        $contacts = array_map('parseToInt', explode(',', $this->request->param('contacts')));
+        foreach ($contacts as $contactID)
+            $this->contactOperand($contactID, 'deleteOne');
+        jsonHeader('OK', 'Contacts deleted');
     }
 
     public function create()
@@ -99,27 +107,12 @@ class ContactController extends BaseController
 
         // check if contact phone number already exist
         if ($this->contactModel->has(['Phone' => $this->request->param('userPhone')]))
-            return json(
-                [
-                    'status' => 'error',
-                    'message' => 'Phone number already exist!'
-                ]
-            );
+            jsonHeader('error', 'Phone number already exist!');
 
         $contactID = $this->contactModel->create($newContact);
 
-        if ($contactID > 0) return json(
-            [
-                'status' => 'OK',
-                'message' => 'Contact added'
-            ]
-        );
+        if ($contactID > 0) jsonHeader('OK', 'Contact added');
 
-        return json(
-            [
-                'status' => 'error',
-                'message' => 'Something went wrong!'
-            ]
-        );
+        jsonHeader('error', 'Something went wrong!');
     }
 }

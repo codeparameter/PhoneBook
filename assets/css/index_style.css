@@ -56,3 +56,9 @@ a:active{
 .pager > *{
     margin-inline: 2px;
 }
+
+#deleteContact,
+#selectAll,
+#deleteMultiple{
+    cursor: pointer;
+}
