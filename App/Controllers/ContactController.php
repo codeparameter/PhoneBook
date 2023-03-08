@@ -90,8 +90,7 @@ class ContactController extends BaseController
 
     public function deleteSelected()
     {
-        $contacts = array_map('parseToInt', explode(',', $this->request->param('contacts')));
-        foreach ($contacts as $contactID)
+        foreach ($this->request->param('contacts') as $contactID)
             $this->contactOperand($contactID, 'deleteOne');
         jsonHeader('OK', 'Contacts deleted');
     }

@@ -26,9 +26,8 @@ $(document).ready(function () {
   });
 
   $("#deleteMultiple").click(function (){
-    const targetLink = $(this).attr("data-target") + "?contacts=" + selectedContacts.join(',');
+    const targetLink = $(this).attr("data-target") + "?contacts[]=" + selectedContacts.join(',');
     $.post(targetLink, function (response) {
-        console.log(response);
       if (response["status"] === "OK") {
         window.location.href = "/";
       }
