@@ -44,47 +44,54 @@ class ContactController extends BaseController
         elseif ($contactID <= 0)
             jsonHeader('error', 'Contact ID must be greater than 0');
 
-        $contact = $this->contactModel->{$operator}($contactID);
-
-        if (is_null($contact))
-            jsonHeader('error', 'Wrong Contact ID!');
-
-        return $contact;
+        return $this->contactModel->{$operator}($contactID);
     }
+
+    private function getContact($contactID, $operator)
+    {
+        return validate_contact(
+            $this->contactOperand($contactID, $operator)
+        );
+    }
+
+
 
     public function editContact($contactID)
     {
-        $contact = $this->contactOperand($contactID, 'find');
+        $contact = $this->getContact($contactID, 'find');
+        $phone = $this->request->param('userPhone');
+
+        validate_phone($phone);
 
         $phoneChanged = $contact->Phone != $this->request->param('userPhone');
 
-        if ($phoneChanged){
-            if ($this->contactModel->has(['Phone' => $this->request->param('userPhone')])){
+        if ($phoneChanged) {
+            if ($this->contactModel->has(['Phone' => $phone])) {
                 jsonHeader('error', 'Phone number already exist!');
             }
-        }
-        else{
-            if ($this->contactModel->count(['Phone' => $this->request->param('userPhone')]) > 1){
+        } else {
+            if ($this->contactModel->count(['Phone' => $phone]) > 1) {
                 jsonHeader('error', 'Phone number already exist!');
             }
         }
 
         $contact->FistName = $this->request->param('firstName');
         $contact->LastName = $this->request->param('lastName');
-        $contact->Phone = $this->request->param('userPhone');
+        $contact->Phone = $phone;
         $contact->save();
         jsonHeader('OK', 'Contact edited');
     }
 
     public function editView($contactID)
     {
-        $contact = $this->contactOperand($contactID, 'find');
+        $contact = $this->getContact($contactID, 'find');
         view('editContact', $contact->getAttrs());
     }
 
     public function delete($contactID)
     {
-        $this->contactOperand($contactID, 'deleteOne');
+        $delete = $this->contactOperand($contactID, 'deleteOne');
+        confirm_delete($delete);
         jsonHeader('OK', 'Contact deleted');
     }
 
@@ -104,8 +111,12 @@ class ContactController extends BaseController
             'Phone' => $this->request->param('userPhone'),
         ];
 
+        $phone = $this->request->param('userPhone');
+
+        validate_phone($phone);
+
         // check if contact phone number already exist
-        if ($this->contactModel->has(['Phone' => $this->request->param('userPhone')]))
+        if ($this->contactModel->has(['Phone' => $phone]))
             jsonHeader('error', 'Phone number already exist!');
 
         $contactID = $this->contactModel->create($newContact);

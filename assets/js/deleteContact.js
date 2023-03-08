@@ -5,6 +5,7 @@ $(document).ready(function () {
   $(".deleteContact").click(function () {
     const targetLink = $(this).attr("data-target");
     $.post(targetLink, function (response) {
+      console.log(response);
       if (response["status"] === "OK") {
         window.location.href = "/";
       }
